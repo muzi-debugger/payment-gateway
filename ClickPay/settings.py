@@ -119,7 +119,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STRIPE_SECRET_KEY = 'placeholder'
+STRIPE_SECRET_KEY = 'sk_test_51QkQfuAV3cDPkeVeIrgmgUAszzWIqXdUWt8VkTMKezKvZU1yCIp9zum9bovhMtSgl5D6djSWmUUqIlFLSkGMojhh00PSACheO2'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

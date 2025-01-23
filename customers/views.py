@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from .forms import CustomerRegistrationForm
 from .models import Customer
 
-stripe.api_key = "placeholder"
+stripe.api_key = "sk_test_51QkQfuAV3cDPkeVeIrgmgUAszzWIqXdUWt8VkTMKezKvZU1yCIp9zum9bovhMtSgl5D6djSWmUUqIlFLSkGMojhh00PSACheO2"
 
 def customer_registration(request):
     if request.method == 'POST':
