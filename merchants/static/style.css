@@ -1,0 +1,8 @@
+.merchant_button {
+    background-color: skyblue;
+    padding: 15px;
+    border: 3px solid black;
+    margin-right: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+}

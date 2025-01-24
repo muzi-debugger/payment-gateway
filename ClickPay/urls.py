@@ -25,4 +25,6 @@ urlpatterns = [
     path('', app_views.home_page, name='home_page'),
     path('', include('customers.urls')),
     path('', include('payments_app.urls')),
+    path('merchants/', include('merchants.urls')),
+    
 ]
