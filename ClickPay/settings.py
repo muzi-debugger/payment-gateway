@@ -11,10 +11,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-
+import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customers',
     'payments_app',
+    'merchants',
 ]
 
 MIDDLEWARE = [
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'ClickPay.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'customers/templates'],
+        'DIRS': ['static', 'customers/static', 'merchants/static'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,7 +122,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-STRIPE_SECRET_KEY = 'sk_test_51QkQfuAV3cDPkeVeIrgmgUAszzWIqXdUWt8VkTMKezKvZU1yCIp9zum9bovhMtSgl5D6djSWmUUqIlFLSkGMojhh00PSACheO2'
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

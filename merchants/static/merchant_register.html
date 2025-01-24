@@ -1,0 +1,26 @@
+<!-- merchant_register.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Create Account</title>
+</head>
+
+<body>
+
+    <form method="post">
+        <h1>Let’s get you started!</h1>
+        <p>Let us help you find the right solution to grow your business.</p>
+        <p>Select ALL that apply.</p>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="merchant_button" type="submit">Continue</button>
+    </form>
+</body>
+
+</html>

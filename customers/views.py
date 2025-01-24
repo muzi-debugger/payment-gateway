@@ -2,8 +2,12 @@ import stripe
 from django.shortcuts import redirect, render
 from .forms import CustomerRegistrationForm
 from .models import Customer
+import environ
 
-stripe.api_key = "sk_test_51QkQfuAV3cDPkeVeIrgmgUAszzWIqXdUWt8VkTMKezKvZU1yCIp9zum9bovhMtSgl5D6djSWmUUqIlFLSkGMojhh00PSACheO2"
+env = environ.Env()
+environ.Env.read_env()
+
+stripe.api_key = env('STRIPE_SECRET_KEY')
 
 def customer_registration(request):
     if request.method == 'POST':
