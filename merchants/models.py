@@ -14,6 +14,7 @@ class Province(models.TextChoices):
     FREE_STATE = 'Free State'
     
 class Merchant(models.Model):
+    stripe_account_id = models.CharField(max_length=255, null=True, blank=True)
     stripe_customer_id = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     surname = models.CharField(max_length=255)
@@ -24,6 +25,8 @@ class Merchant(models.Model):
 
 
     def __str__(self):
-        return self.value
+        return self.name
+
+
     
     

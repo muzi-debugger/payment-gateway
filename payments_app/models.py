@@ -41,4 +41,4 @@ class Payments(models.Model):
 # See your keys here: https://dashboard.stripe.com/apikeys
 
 def __str__(self):
-    return self.id
+    return f"Payment {self.id}"
