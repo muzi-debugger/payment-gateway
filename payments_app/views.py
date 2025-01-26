@@ -4,11 +4,13 @@ from django.http import JsonResponse
 from merchants.models import Merchant
 import stripe
 from django.views.decorators.csrf import csrf_exempt
+import logging
 
 from payments_app.models import Payments
 from django.http import JsonResponse
 
 # Create your views here.
+logger = logging.getLogger(__name__)
 
 def payments(request):
     return render(request, 'payments.html')
@@ -31,6 +33,7 @@ def create_payment_intent(request, merchant_id):
 
 @csrf_exempt
 def stripe_webhook(request):
+    logger.info("Stripe Webhook Received: %s", request.body.decode("utf-8"))
     payload = request.body
     sig_header = request.META.get("HTTP_STRIPE_SIGNATURE", "")
     event = None
@@ -40,8 +43,10 @@ def stripe_webhook(request):
             payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
         )
     except ValueError:
+        logger.error("Invalid payload %s", payload)
         return JsonResponse({"error": "Invalid payload"}, status=400)
     except stripe.error.SignatureVerificationError:
+        logger.error("Invalid signature %s", sig_header)
         return JsonResponse({"error": "Invalid signature"}, status=400)
 
     if event["type"] == "payment_intent.succeeded":
