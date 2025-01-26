@@ -1,5 +1,6 @@
 from django.db import models
 import stripe 
+from customers.models import Customer
 # Create your models here.
 class Province(models.TextChoices):
     GAUTENG = 'Gauteng'
@@ -13,13 +14,19 @@ class Province(models.TextChoices):
     FREE_STATE = 'Free State'
     
 class Merchant(models.Model):
+    stripe_account_id = models.CharField(max_length=255, null=True, blank=True)
     stripe_customer_id = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     surname = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     Province = models.CharField(max_length=25, choices=Province.choices)
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE)
 
 
     def __str__(self):
-        return self.value
+        return self.name
+
+
+    
+    

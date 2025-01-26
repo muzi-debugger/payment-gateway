@@ -12,11 +12,13 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import environ
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env()
+environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -27,7 +29,9 @@ SECRET_KEY = 'django-insecure-34jyasne=%lzcyxlle3^op25$f4yzb=p@+2zv(453(uhq+rsrk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.app'] # Wild cards are less secure
+
+
 
 
 # Application definition
@@ -123,7 +127,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
-
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
