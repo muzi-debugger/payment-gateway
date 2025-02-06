@@ -1,8 +1,8 @@
 from django.db import models
-
-# Create your models here.
+from django import forms
 class Customer(models.Model):
-    stripe_customer_id = models.CharField(max_length=255)
+    customer_id = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
+    

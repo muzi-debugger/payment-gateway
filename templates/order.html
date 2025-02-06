@@ -1,0 +1,27 @@
+<!-- templates/order.html -->
+<html>
+<head>
+    <button id="pay-now">Pay Now</button>
+    <script>
+        document.getElementById("pay-now").addEventListener("click", async () => {
+            {% if user.is_authenticated %}
+            fetch("{% url 'payments_app:create-checkout-session' product.id %}", {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    window.location.href = data.url;  // Redirect to Stripe Checkout
+                } else {
+                    alert("Error creating checkout session.");
+                }
+            });
+            {% else %}
+                window.location.href = "{% url 'customers:customer_login' %}?next={% url 'payments_app:create-checkout-session' product.id %}";
+            {% endif %}
+        });
+    </script>
+    </head>
+</body>
+</html>

@@ -1,29 +1,34 @@
-import stripe
-from django.shortcuts import redirect, render
-from .forms import CustomerRegistrationForm
-from .models import Customer
-import environ
+from django.contrib.auth import login
+from django.shortcuts import render, redirect
+from .forms import RegistrationForm
 
-env = environ.Env()
-environ.Env.read_env()
+from django.shortcuts import render
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
 
-stripe.api_key = env('STRIPE_SECRET_KEY')
 
-def customer_registration(request):
+def sign_up(request):
     if request.method == 'POST':
-        form = CustomerRegistrationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
-            customer_data = form.cleaned_data
-            stripe_customer = stripe.Customer.create(
-                name=customer_data['name'],
-                email=customer_data['email'],
-            )
-            customer = Customer.objects.create(
-                stripe_customer_id=stripe_customer.id,
-                name=customer_data['name'],
-                email=customer_data['email'],
-            )
-            return redirect('customers:customer_registration')
-    else:
-        form = CustomerRegistrationForm()
-    return render(request, 'customer_registration.html', {'form': form})
+            user = form.save()
+            login(request, user)
+            return redirect('/')
+        else:
+            form = RegistrationForm()
+    return render(request, 'registration.html', {'form': form})
+
+
+def customer_login(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+        user = authenticate(request, username=email, password=password)
+        if user:
+            login(request, user)
+            next_url = request.GET.get('next', '/')
+            return HttpResponseRedirect(next_url)
+        else:
+            return render(request,'login.html', {'error': 'Invalid email or password'})
+    return render(request, 'login.html', {'error': 'Invalid email or password'})
+

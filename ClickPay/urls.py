@@ -23,8 +23,7 @@ from . import views as app_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', app_views.home_page, name='home_page'),
-    path('', include('customers.urls')),
-    path('', include('payments_app.urls')),
-    path('merchants/', include('merchants.urls')),
+    path('customers/', include('customers.urls')),
+    path('payments/', include('payments_app.urls')),
     
 ]

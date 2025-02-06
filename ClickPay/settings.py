@@ -29,10 +29,14 @@ SECRET_KEY = 'django-insecure-34jyasne=%lzcyxlle3^op25$f4yzb=p@+2zv(453(uhq+rsrk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.app'] # Wild cards are less secure
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1',
+    '31b7-41-193-213-243.ngrok-free.app ',  # Allow Ngrok
+]
 
-
-
+SUCCESS_URL = '127.0.0.1:8000/success'
+CANCEL_URL = '127.0.0.1:8000/cancel'
 
 # Application definition
 
@@ -45,10 +49,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'customers',
     'payments_app',
-    'merchants',
+    'corsheaders',
+    'rest_framework',
+    'products',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Ensure it's at the top
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -58,12 +66,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+
 ROOT_URLCONF = 'ClickPay.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['static', 'customers/static', 'merchants/static'],
+        'DIRS': [BASE_DIR, 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -128,7 +138,59 @@ STATIC_URL = 'static/'
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'webhook.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+    },
+}
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5500',
+    'https://31b7-41-193-213-243.ngrok-free.app ',  # Allow your ngrok backend
+    
+]
+
+CORS_ALLOW_ALL_ORIGINS = True  # Security best practice (keep it False)
+CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://31b7-41-193-213-243.ngrok-free.app",
+    "http://localhost:5500",
+]
+CORS_ALLOW_METHODS = [  # Explicitly allow HTTP methods
+    "GET",
+    "POST",
+    "OPTIONS",
+    "PUT",
+    "PATCH",
+    "DELETE",
+]
+
+CORS_ALLOW_HEADERS = [  # Allow necessary headers
+    "content-type",
+    "authorization",
+    "accept",
+    "origin",
+    "x-requested-with",
+]
+LOGIN_URL = '/customers/login/'
