@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://js.stripe.com/v3/"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+</head>
+<body>
+
+    <h2>Checkout</h2>
+    <p>Redirecting to Stripe...</p>
+
+    <script>
+        const stripe = Stripe("{{ stripe_key }}");  // Uses correct publishable key
+        stripe.redirectToCheckout({ sessionId: "{{ session_id }}" });
+    </script>
+
+</body>
+</html>

@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import customer_registration as register_customer
-from django.contrib.auth import views as auth_views
+from .views import sign_up, customer_login
 
 app_name = 'customers'
 
 urlpatterns = [
-    path('customer_registration/', register_customer, name='customer_registration'),
+    path('sign_up/', sign_up, name='sign_up'),
+    path('login/', customer_login, name='customer_login'),
 ]
