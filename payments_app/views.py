@@ -6,11 +6,13 @@ import stripe
 import logging
 from .models import Order
 from products.models import Product
-
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
+from customers.models import Customer
+
 # Set the Stripe secret key correctly
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 logger = logging.getLogger(__name__)
 
 def payments(request):
@@ -20,44 +22,69 @@ def payments(request):
 @login_required
 def create_checkout_session(request, product_id):  
     try:
-        product = Product.objects.get(id=product_id)  # Get product from database
-        # create an order instance
+        # Get the user (logged-in user)
+        user = request.user
+
+        # Ensure the customer exists or create it
+        customer, created = Customer.objects.get_or_create(user=user)
+
+        # If the customer was created, create the Stripe customer and associate it
+        if created:
+            stripe_customer = stripe.Customer.create(email=user.email)
+            customer.stripe_customer_id = stripe_customer.id  # Save the Stripe customer ID
+            customer.save()
+        else:
+            # Fetch the existing Stripe customer ID
+            stripe_customer = stripe.Customer.retrieve(customer.stripe_customer_id)
+
+        # Get the product from the database
+        product = Product.objects.get(id=product_id)  # Get the product by ID
+
+        # Create an order instance
         order = Order.objects.create(
             product=product,  # Associate the product with the order
-            buyer_email=request.user.email,  # Get the buyer's email
-            customer=request.user.customer  # Get the customer associated with the buyer
+            buyer_email=user.email,  # Store the buyer's email
+            customer=customer  # Associate the customer object
         )
-        # Create a checkout session
+
+        # Create Stripe Checkout session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
                 'price_data': {  # Price data
-                    'currency': 'usd',  # Currency
-                    'product_data': {  # Product data
-                        'name': product.name,  # Product name
-                        'images': [product.image.url],  # Product image URL
-                    },  # Product data
-                    'unit_amount': int(product.price * 100),  # Convert to cents
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': product.name,
+                        #'images': [product.image.url],  # Product image URL
+                    },
+                    'unit_amount': int(product.price),  # Convert price to cents
                 },
-                'quantity': 1,  # Quantity
+                'quantity': 1,
             }],
-            metadata={  # Metadata
-                'order_id': order.id,  # Order ID
-                'email': request.user.email,  # Buyer's email
-                'product_name': product.name,  # Product name
-                'customer_name': request.user.customer.name,  # Customer name
-            },  # Metadata
-            mode='payment',  # Mode
-            success_url=settings.SUCCESS_URL,  # Success URL
-            cancel_url=settings.CANCEL_URL,  # Cancel URL
-            customer=request.user.customer.stripe_customer_id,  # Customer ID
+            metadata={  # Metadata (tracking data)
+                'order_id': order.id,
+                'email': user.email,
+                'product_name': product.name,
+                'product_id': product.id,  # Include the product ID
+                'customer_name': user.get_full_name(),  # Use the user's name
+            },
+            mode='payment',
+            success_url=settings.SUCCESS_URL,
+            cancel_url=settings.CANCEL_URL,
+            customer=stripe_customer.id,  # Use the Stripe customer ID here
         )
-        return JsonResponse({'url': session.url})  # Return the checkout session URL
+        # print success url
+        
+
+        # Return the session URL to redirect the user to Stripe Checkout
+        return JsonResponse({'url': session.url})
+
     except Product.DoesNotExist:
         return JsonResponse({'error': 'Product not found'}, status=404)
     except Exception as e:
-        logger.error(f"Error creating Stripe session: {e}")  # Log the error
-        return JsonResponse({'error': 'Could not create checkout session'}, status=500)  # Return an error response
+        logger.error(f"Error creating Stripe session: {e}")
+        return JsonResponse({'error': 'Could not create checkout session'}, status=500)
+
 
 
 @csrf_exempt
@@ -91,3 +118,9 @@ def stripe_webhook(request):
 def order_view(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     return render(request, 'order.html', {'product': product})
+
+def success(request):
+    return render(request, 'success.html')
+
+def cancel(request):
+    return render(request, 'cancel.html')

@@ -35,8 +35,10 @@ ALLOWED_HOSTS = [
     '31b7-41-193-213-243.ngrok-free.app ',  # Allow Ngrok
 ]
 
-SUCCESS_URL = '127.0.0.1:8000/success'
-CANCEL_URL = '127.0.0.1:8000/cancel'
+SUCCESS_URL = 'http://localhost:8000/payments/success/'
+CANCEL_URL = 'http://localhost:8000/payments/cancel/'
+print(SUCCESS_URL)
+
 
 # Application definition
 

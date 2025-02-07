@@ -1,27 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <script src="https://js.stripe.com/v3/"></script>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout</title>
-    </head>
-    <body>
-        <h2> Complete your purchase </h2>
-        <button id="buy-button">Pay Now</button>
-        <script>
-            const key = Stripe('pk_test_51J1m2o3d0m3o4e5N6O7P8Q9R0S1T2U3V4W5X6Y7Z8a9b0c1d2e3f4g5h6i7j8k9l0m');
+<html>
+    <head>
 
-            document.getElementById('buy-button').addEventListener('click', async () => {
-                const response = await fetch('create-checkout-session', {method: 'POST'});
-                const session = await response.json();
-
-                if(session.id) {
-                    stripe.redirectToCheckout({ sessionId: session.id });
-                } else {
-                    alert('Failed to create checkout session');
-                }
-            });
-        </script>
-    </body>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cancel Payment</title>
+        </head>
+        <body>
+            <h2> Order cancelled </h2>
+            </html

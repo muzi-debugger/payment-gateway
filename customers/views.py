@@ -8,15 +8,15 @@ from django.http import HttpResponseRedirect
 
 
 def sign_up(request):
+    form = RegistrationForm()
+    
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('/')
-        else:
-            form = RegistrationForm()
-    return render(request, 'registration.html', {'form': form})
+        if form.is_valid():  # Check if the form is valid
+            user = form.save()  # Save the user
+            login(request, user)  # Log the user in
+            return redirect('payments_app:create-checkout-session', product_id=1)  # Redirect to the home page
+    return render(request, 'registration.html', {'form': form})  # Render the registration form
 
 
 def customer_login(request):
